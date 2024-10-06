@@ -1,0 +1,48 @@
+<div class="mx-auto max-w-screen-xl px-4 2xl:px-0 border rounded-md  shadow border-gray-200 dark:border-gray-700">
+
+        <table class="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 capitalize bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" class="px-6 py-3">Order No</th>
+                <th scope="col" class="px-6 py-3">Order Date</th>
+                <th scope="col" class="px-6 py-3"> Payment Mathod</th>
+
+                <th scope="col" class="px-6 py-3">
+                  <span class="sr-only">Details</span>
+                </th>
+              </tr>
+            </thead>
+            @if(paginatedOrders.length > 0){
+            <tbody>
+              @for (order of (paginatedOrders| paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: 100 }); track order.OrderId; ) {
+              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <th scope="row"  [routerLink]="['/details', order.OrderId]"  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  {{ order.OrderId }}
+                </th>
+                <td class="px-6 py-4">{{DateConvert }}</td>
+
+                <td class="px-6 py-4">
+                  {{ order.PaymentType }}
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <a  class="font-medium text-blue-600 dark:text-blue-500 hover:underline" [routerLink]="['details/', order.OrderId]" >Details</a>
+                </td>
+              </tr>
+              }
+            </tbody>
+            }
+            @else {
+
+              <p>No orders available.</p>
+
+        }
+          </table>
+
+          <div class="w-full text-center">
+            <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+          </div>
+
+
+</div>
+
+

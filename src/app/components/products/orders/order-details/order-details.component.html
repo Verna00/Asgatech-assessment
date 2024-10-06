@@ -1,0 +1,101 @@
+@if( order ){
+  <article class="mx-auto max-w-screen-xl px-4 2xl:px-0 border rounded-md  shadow border-gray-200 dark:border-gray-700 ">
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3">
+      <h2 class="text-xl font-bold text-gray-700 dark:text-white">Order Details</h2>
+      <p class="text-gray-500 dark:text-gray-400 mb-2"><span class="text-muted">Order ID: </span>#{{ order.OrderId }} </p>
+    </section>
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3">
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Product
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Quantity
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for( product of order.Products; track product.ProductId; ){
+
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ product.Product?.ProductName}}
+              </th>
+              <td class="px-6 py-4">
+                <div class="flex items-center ml-4">
+                  <button class="px-3 py-1 text-white bg-gray-600 rounded-md"  (click)="$event.stopPropagation(); handleQuantity( product, '-')">-</button>
+                  <span class="mx-3 text-lg text-black">{{product.Quantity}}</span>
+                  <button class="px-3 py-1 text-white bg-gray-600 rounded-md" (click)="$event.stopPropagation();handleQuantity( product, '+')">+</button>
+                </div>
+
+            </td>
+            <td class="px-6 py-4" >
+              ${{ calcPrice( product ) | number:'1.2-2' }}
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <div class="flex items-center justify-end">
+        <p class="text-gray-500 dark:text-gray-400 mb-2"><span class="text-muted">Total: </span>${{ sumOfOrder(order) | number:'1.2-2' }}</p>
+      </div>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <h3 class="text-xl font-bold text-gray-700 dark:text-white border-b border-gray-200 dark:border-gray-700">Client Details</h3>
+      <div class="grid  grid-cols-2  gap-5 mt-5">
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Name :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Name }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Email :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Email }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Phone :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Phone }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Address :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Address }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <h3 class="text-xl font-bold text-gray-700 dark:text-white border-b border-gray-200 dark:border-gray-700">Payment Details</h3>
+      <div class="grid gap-4 sm:grid-cols-2 mt-4">
+        <div class="flex items-center">
+          <input type="radio" class="w-5 h-5 cursor-pointer" id="card"  [checked]="order.PaymentType === 'online'? 'checked' : false" />
+          <label for="card" class="ml-4 flex gap-2 cursor-pointer">
+            <img src="https://readymadeui.com/images/visa.webp" class="w-12" alt="card1" />
+            <img src="https://readymadeui.com/images/american-express.webp" class="w-12" alt="card2" />
+            <img src="https://readymadeui.com/images/master.webp" class="w-12" alt="card3" />
+          </label>
+        </div>
+
+        <div class="flex items-center">
+          <input type="radio" class="w-5 h-5 cursor-pointer" id="paypal"  [checked]="order.PaymentType === 'Cash'? 'checked' : false"/>
+          <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
+            <img src="assets/4470504.png" class="w-20" alt="paypalCard" />
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class=" flex justify-end gap-5 border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <button type="button" class="px-4 py-2 text-white bg-blue-600 rounded-lg ">Continue Order</button>
+      <button type="button" class="px-4 py-2 text-white bg-red-600 rounded-lg ">Cancel Order</button>
+    </section>
+  </article>
+}
