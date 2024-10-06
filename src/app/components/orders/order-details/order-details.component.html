@@ -1,18 +1,106 @@
+@if( order ){
+  <article class="mx-auto max-w-screen-xl px-4 2xl:px-0 border rounded-md  shadow border-gray-200 dark:border-gray-700 ">
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3">
+      <h2 class="text-xl font-bold text-gray-700 dark:text-white">Order Details</h2>
+      <p class="text-gray-500 dark:text-gray-400 mb-2"><span class="text-muted">Order ID: </span>#{{ order.OrderId }} </p>
+    </section>
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3">
 
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Product
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Quantity
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for( product of order.Products; track product.ProductId; ){
 
-<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <svg class="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M18 5h-.7c.229-.467.349-.98.351-1.5a3.5 3.5 0 0 0-3.5-3.5c-1.717 0-3.215 1.2-4.331 2.481C8.4.842 6.949 0 5.5 0A3.5 3.5 0 0 0 2 3.5c.003.52.123 1.033.351 1.5H2a2 2 0 0 0-2 2v3a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V7a2 2 0 0 0-2-2ZM8.058 5H5.5a1.5 1.5 0 0 1 0-3c.9 0 2 .754 3.092 2.122-.219.337-.392.635-.534.878Zm6.1 0h-3.742c.933-1.368 2.371-3 3.739-3a1.5 1.5 0 0 1 0 3h.003ZM11 13H9v7h2v-7Zm-4 0H2v5a2 2 0 0 0 2 2h3v-7Zm6 0v7h3a2 2 0 0 0 2-2v-5h-5Z"/>
-    </svg>
-    <a href="#">
-        <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Need a help in Claim?</h5>
-    </a>
-    <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Go to this step by step guideline process on how to certify for your weekly benefits:</p>
-    <a href="#" class="inline-flex font-medium items-center text-blue-600 hover:underline">
-        See our guideline
-        <svg class="w-3 h-3 ms-2.5 rtl:rotate-[270deg]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"/>
-        </svg>
-    </a>
-</div>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ product.Product?.ProductName}}
+              </th>
+              <td class="px-6 py-4">
+                <div class="flex items-center ml-4">
+                  <!-- <button class="px-3 py-1 text-white bg-gray-600 rounded-md"  (click)="$event.stopPropagation(); handleQuantity( product, '-')">-</button> -->
+                  <span class="mx-3 text-lg text-black">{{product.Quantity}}</span>
+                  <!-- <button class="px-3 py-1 text-white bg-gray-600 rounded-md" (click)="$event.stopPropagation();handleQuantity( product, '+')">+</button> -->
+                </div>
 
+            </td>
+            <td class="px-6 py-4" >
+              ${{ calcPrice( product ) | number:'1.2-2' }}
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <div class="flex items-center justify-end">
+        <p class="text-gray-500 dark:text-gray-400 mb-2"><span class="text-muted">Total: </span>${{ sumOfOrder(order) | number:'1.2-2' }}</p>
+      </div>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <h3 class="text-xl font-bold text-gray-700 dark:text-white border-b border-gray-200 dark:border-gray-700">Client Details</h3>
+      <div class="grid  grid-cols-2  gap-5 mt-5">
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Name :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Name }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Email :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Email }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Phone :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Phone }}</p>
+        </div>
+        <div class="flex  items-center justify-start">
+          <p class="text-lg text-gray-400 dark:text-white"> Client Address :</p>
+          <p class="text-lg text-gray-800 dark:text-white"> {{ order.User?.Address }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-gray-200 dark:border-gray-700 m-3 mt-6">
+      <h3 class="text-xl font-bold text-gray-700 dark:text-white border-b border-gray-200 dark:border-gray-700">Payment Details</h3>
+      <div class="grid gap-4 sm:grid-cols-2 mt-4">
+        @if(order.PaymentType === 'online'){
+          <div class="flex items-center" >
+            <input type="radio" class="w-5 h-5 cursor-pointer" id="card"  [checked]="order.PaymentType === 'online'? 'checked' : false" />
+            <label for="card" class="ml-4 flex gap-2 cursor-pointer">
+              <img src="https://readymadeui.com/images/visa.webp" class="w-12" alt="card1" />
+              <img src="https://readymadeui.com/images/american-express.webp" class="w-12" alt="card2" />
+              <img src="https://readymadeui.com/images/master.webp" class="w-12" alt="card3" />
+            </label>
+          </div>
+        } @else if (order.PaymentType === 'Cash') {
+          <div class="flex items-center">
+            <input type="radio" class="w-5 h-5 cursor-pointer" id="paypal"  [checked]="order.PaymentType === 'Cash'? 'checked' : false"/>
+            <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
+              <img src="assets/4470504.png" class="w-20" alt="paypalCard" />
+            </label>
+          </div>
+        }
+   
+
+     
+      </div>
+    </section>
+
+    <section class=" flex justify-end gap-5 border-gray-200 dark:border-gray-700 m-3 mt-6">
+
+      <button type="button" class="px-4 py-2 text-white bg-red-600 rounded-lg " routerLink="/orders"></button>
+    </section>
+  </article>
+}

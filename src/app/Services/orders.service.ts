@@ -24,7 +24,20 @@ export class OrdersService {
   }
 
   apiGetOrderById(orderId: number) {
-    return  this.http.get<any>(this.ordersUrl).pipe(map((data: any) => data.find((order: Orders) => order.OrderId === orderId)) );
+    return  this.http.get<any>(this.ordersUrl).pipe(map((data: any) => {
+      const order = data.find((order: Orders) => order.OrderId === orderId)
+      if(!order){
+        const storge = localStorage.getItem('orders');
+        if(storge){
+          const list = JSON.parse(storge);
+          return list.find((order: Orders) => order.OrderId === orderId);
+        }else{
+          throw new Error('Order not found')
+        }
+      }else{
+        return order
+      };
+    }) );
   }
   getUsers(): Observable<any> {
     return this.http.get<any>(this.usersUrl);

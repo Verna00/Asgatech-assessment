@@ -7,6 +7,8 @@ import { Products } from '../../../interface/products';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Users } from '../../../interface/users';
+import { Orders } from '../../../interface/order';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -33,12 +35,16 @@ export class ProductListComponent implements OnInit, AfterViewInit{
   orderForm:FormGroup | undefined;
   Users:Users[] = []
   isCreateOrder: boolean = false
-  constructor( private productService: OrdersService){
+  holdListOfOrders:Orders[] = []
+  constructor( private productService: OrdersService,
+    private router: Router
+  ){
 
   }
   ngOnInit(): void {
     this.getProducts();
     this.getUsers();
+    this.getListOfOrders();
     this.initalForm();
   }
   initalForm(){
@@ -77,9 +83,12 @@ export class ProductListComponent implements OnInit, AfterViewInit{
   getProducts(){
     this.productService.getProducts().subscribe(data => {
       this.products = data;
-
-
     });
+  }
+  getListOfOrders(){
+    this.productService.getOrders().subscribe(data => {
+      this.holdListOfOrders =data;
+    })
   }
   getUsers(){
     this.productService.getUsers().subscribe(data => {
@@ -149,11 +158,18 @@ export class ProductListComponent implements OnInit, AfterViewInit{
     });
   }
   createOrder(){
-    console.log(this.orderForm?.getRawValue());
+    this.holdListOfOrders.unshift({...this.orderForm?.getRawValue(),OrderDate:new Date().toLocaleString(),OrderId:(Math.random()*1000) }as Orders)
+    localStorage.setItem('orders',JSON.stringify(this.holdListOfOrders))
+    this.closrIsCreateOrder()
+    this.router.navigate(['/', 'orders'])
   }
 
   getProductNamr(productId:number){
     return this.paginatedProducts.find(product => product.ProductId == productId)?.ProductName
+
+  }
+  getProductQuantity(productId:number){
+    return this.paginatedProducts.find(product => product.ProductId == productId)?.AvailablePieces
 
   }
 }

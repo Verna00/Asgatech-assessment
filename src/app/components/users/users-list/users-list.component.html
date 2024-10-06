@@ -1,3 +1,4 @@
+<section class="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
 <article class="mx-auto max-w-screen-xl px-4 2xl:px-0 border rounded-md  shadow border-gray-200 dark:border-gray-700">
     <table class="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 capitalize bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -13,7 +14,7 @@
         </thead>
         <tbody>
 
-            @for (user of users; track user.Id; ) {
+            @for (user of (paginatedUsers| paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }); track user.Id; ) {
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {{ user.Name }}
@@ -40,4 +41,9 @@
             }
         </tbody>
     </table>
+    <div class="w-full text-center">
+        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+      </div>
 </article>
+
+</section>

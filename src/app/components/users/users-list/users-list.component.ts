@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { OrdersService } from '../../../Services/orders.service';
 import { Users } from '../../../interface/users';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { Users } from '../../../interface/users';
   imports: [ HttpClientModule,
     CommonModule ,
     NgClass,
-   
+    NgxPaginationModule,
     NgIf],
     providers:[OrdersService,DatePipe],
   templateUrl: './users-list.component.html',
@@ -20,6 +21,8 @@ import { Users } from '../../../interface/users';
 export class UsersListComponent implements OnInit {
 users:Users[]=[]
 showTooltip: boolean = true;
+currentPage: number = 1;
+itemsPerPage: number = 10;
 
 constructor( private orderService: OrdersService){
 
@@ -31,11 +34,15 @@ ngOnInit(): void {
 getOrders(){
   this.orderService.getUsers().subscribe((data) => {
     this.users = data;
-    console.log(this.users ,'');
+   
     
  
   
 });
+}
+get paginatedUsers() {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  return this.users.slice(startIndex, startIndex + this.itemsPerPage);
 }
 
 }
