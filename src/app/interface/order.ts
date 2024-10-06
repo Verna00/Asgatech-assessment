@@ -8,6 +8,7 @@ export interface Orders {
   User?:       Users;
   Products:    Product[];
   PaymentType: string;
+  Total?:number,
 }
 
 export interface Product {

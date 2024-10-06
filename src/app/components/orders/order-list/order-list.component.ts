@@ -5,6 +5,8 @@ import { OrdersService } from '../../../Services/orders.service';
 import { Orders, Product } from '../../../interface/order';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { forkJoin } from 'rxjs';
+import { Products } from '../../../interface/products';
 
 @Component({
   selector: 'app-order-list',
@@ -30,6 +32,7 @@ export class OrderListComponent implements OnInit {
   DateConvert:any
   isLoading:boolean=false
   order:Orders|undefined =undefined
+  productsList:Products[] =[]
   constructor(
     private orderService: OrdersService,
 
@@ -38,34 +41,49 @@ export class OrderListComponent implements OnInit {
   }
  ngOnInit(): void {
 
-this.getOrders();
+    this.getOrders();
   }
-
   getOrders(){
-    this.orderService.getOrders().subscribe((data) => {
-      this.orders = data;
+    forkJoin([
+      this.orderService.getProducts(),
+      this.orderService.getOrders()
+    ]).subscribe(res=>{
+      
+      this.orders=res[1]
+      this.productsList= res[0]
+
       this.orders.forEach(obj => {
+        obj.Products.forEach(prod=>{
+          prod.Product = this.productsList.find(el=> el.ProductId === prod.ProductId) 
+        } )
+        obj.Total = this.sumOfOrder(obj)
         if (obj.OrderId > 1) {
           this.DateConvert=new Date(obj.OrderDate).toLocaleString() // Logs each object with id greater than 1
         
         }
     });
+    const savedOrder = localStorage.getItem('orders');
+    if (savedOrder) {
+      const list:Orders[] = JSON.parse(savedOrder);
+      list.forEach(el=>{
+       
+        el.Total = this.sumOfOrder(el)
+      })
+      this.orders = [...list];
+    }
+    })
+   
 
-      const savedOrder = localStorage.getItem('orders');
-      if (savedOrder) {
-        const list = JSON.parse(savedOrder);
-        this.orders = [...list];
-      }
-  });
 
 }
 
 
 
 sumOfOrder(order: Orders): number {
-  order.Products.forEach(async product => {
-    product.Product = await this.orderService.apiGetProductsById(product.ProductId);
-  })
+  // order.Products.forEach(async product => {
+  //   product.Product = await this.orderService.apiGetProductsById(product.ProductId);
+  // })
+ 
   return order.Products.reduce((total, currentProduct) => {
     // Access the product price
     const priceProduct = currentProduct.Product?.ProductPrice; // Use optional chaining
